@@ -21,7 +21,37 @@ detect_memory:
       ;子功能号
       mov eax,0xe820
       ;结构体的大小（字节）
-      mov ecx ,20
+      mov ecx ,20;设置字节大小
+      ;系统调用
+      int 0x15;BIOS 的系统调用
+      ;检测标志位
+      jc error;条件跳转
+      
+      ;没问题的话就接着遍历 di ARDS 缓冲区
+      add di ,cx;cx存的是20，特殊的寄存器需要间接存
+
+      inc word [ards_count];自增ards的数量
+
+      cmp ebx,0;比较后续值，判断还有没有ards
+      jnz .next
+      
+      ;检测结束
+      mov si,detecting
+      call print
+      xchg bx,bx
+
+   ;    mov cx,[ards_count];将ards的数量放入到cx通过loop来循环
+   ;    ;结构体指针
+   ;    mov si,0
+   ; .show
+   ;    mov eax,[ards_buffer+si]
+   ;    mov ebx,[ards_buffer+si+8]
+   ;    mov edx,[ards_buffer+si+16]
+   ;    add si,20;
+   ;    xchg bx,bx
+   ;    loop .show
+
+
 
   ;显示loading
   print:
