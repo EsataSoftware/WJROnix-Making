@@ -22,7 +22,7 @@ call read_disk
 
 cmp word [0x1000],0x55aa;判断主引导扇区的正确性
 jnz error
-jmp 0:0x1002;跳转到loading文件写入硬盘的区域去执行
+jmp 0:0x1002;跳转到loading文件写入硬盘的位置去执行
 xchg bx,bx;bochs 的魔术断点
 ;阻塞
 

@@ -55,8 +55,8 @@ detect_memory:
    ;    xchg bx,bx
    ;    loop .show
 
-prepare_protected_mode:
-   xchg bx,bx;
+prepare_protected_mode:;加载保护模式
+   ;xchg bx,bx;
 
    cli;关闭中断
 
@@ -124,7 +124,8 @@ protect_mode:
    mov bl,200;读入几个扇区
    call read_disk
 
-   xchg bx,bx
+   jmp dword code_selector:0x10000;跳转到代码段，并找到代码段0x10000位置的地方执行
+   ud2;表示出错
 jmp $;阻塞
 
 read_disk:
