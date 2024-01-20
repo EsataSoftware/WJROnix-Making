@@ -2,7 +2,7 @@
 
 int magic= ONIX_MAGIC;
 
-char message[]="Hello world!!!";//初始化的数据放在data中
+char message[]="Hello Onix!!!";//初始化的数据放在data中
 char buf[1024];//未初始化的数据放在bss中
 
 void kernel_init()

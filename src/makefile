@@ -2,17 +2,38 @@ BUILD:=../build
 SRC:=.
 
 ENTRYPOINT:=0x10000
+
+CFLAGS := -m32 # 指明程序的大小
+CFLAGS += -fno-builtin # 不需要 gcc 的内置函数，否则会自动替换 gcc 库中的函数
+CFLAGS += -nostdinc # 不需要标准头文件
+CFLAGS += -fno-pic # 不需要位置无关的代码，position independent code 强制更改储存位置
+CFLAGS += -fno-pie # 不需要位置无关的可执行程序
+CFLAGS += -nostdlib # 不需要标准库
+CFLAGS += -fno-stack-protector  # 不需要栈保护
+CFLAGS := $(strip $(CFLAGS)) # 删除多余的空格
+
+
+DEBUG:= -g# 添加调试信息
+INCLUDE:=-I$(SRC)/include #定位到src的include文件下
+
 $(BUILD)/boot/%.bin: $(SRC)/boot/%.asm
 	$(shell mkdir -p $(dir $@))
 	nasm -f bin $< -o $@
 
 $(BUILD)/kernel/%.o: $(SRC)/kernel/%.asm
 	$(shell mkdir -p $(dir $@))
-	nasm -f elf32 $< -o $@
+	nasm -f elf32 $(DEBUG) $< -o $@
 
-$(BUILD)/kernel.bin: $(BUILD)/kernel/start.o
+
+$(BUILD)/kernel/%.o: $(SRC)/kernel/%.c
 	$(shell mkdir -p $(dir $@))
-	ld -m elf_i386 -static $^ -o $@ -Ttext $(ENTRYPOINT)
+	gcc $(CFLAGS) $(DEBUG) $(INCLUDE) -c $< -o $@
+
+$(BUILD)/kernel.bin: $(BUILD)/kernel/start.o \
+	 $(BUILD)/kernel/main.o 
+
+	$(shell mkdir -p $(dir $@))  
+	ld -m elf_i386 -static $^ -o $@ -Ttext $(ENTRYPOINT) 
 
 $(BUILD)/system.bin: $(BUILD)/kernel.bin
 	objcopy -O binary $< $@

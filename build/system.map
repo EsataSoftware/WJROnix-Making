@@ -1,4 +1,8 @@
 00010000 T _start
-00011000 T __bss_start
-00011000 T _edata
-00011000 T _end
+0001000d T kernel_init
+00012000 D magic
+00012004 D message
+00012012 B __bss_start
+00012012 D _edata
+00012020 B buf
+00012420 B _end
