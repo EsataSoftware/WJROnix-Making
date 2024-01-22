@@ -18,9 +18,9 @@ typedef struct descriptor /* 共8位*/
     }_packed descriptor ;
 int main()
 {
-    printf("size of u8 %d",sizeof(u8));
-    printf("size of u8 %d",sizeof(u16));
-    printf("size of u8 %d",sizeof(u32));
-    printf("size of u8 %d",sizeof(u64));
+    printf("size of u8 %d\n",sizeof(u8));
+    printf("size of u8 %d\n",sizeof(u16));
+    printf("size of u8 %d\n",sizeof(u32));
+    printf("size of u8 %d\n",sizeof(u64));
     return 0;
 }
