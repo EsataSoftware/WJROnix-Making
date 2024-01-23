@@ -53,14 +53,7 @@ $(BUILD)/master.img: $(BUILD)/boot/boot.bin \
 	dd if=$(BUILD)/boot/boot.bin of=$@ bs=512 count=1 conv=notrunc 
 	dd if=$(BUILD)/boot/loader.bin of=$@ bs=512 count=4 seek=2 conv=notrunc
 	dd if=$(BUILD)/system.bin of=$@ bs=512 count=200 seek=10 conv=notrunc  
-.PHONY: usb
-usb: $(BUILD)/boot/boot.bin /dev/sdb
-	sudo dd if=/dev/sdb of=tmp.bin bs=512 count=1 conv=notrunc 
-	cp tmp.bin usb.bin
-	sudo rm tmp.bin
-	dd if=boot.bin of=usb.bin bs=446 count=1 conv=notrunc 
-	sudo dd if=usb.bin of=/dev/sdb bs=512 count=1 conv=notrunc 
-	rm usb.bin
+
 
 test: 	$(BUILD)/master.img
 .PHONY: clean
@@ -69,4 +62,8 @@ clean:
 	
 .PHONY: bochs
 bochs: $(BUILD)/master.img
-	bochs -q
+	bochs -q -f ../bochs/bochsrc
+
+.PHONY: bochsg
+bochsg: $(BUILD)/master.img
+	bochs-gdb -q -f ../bochs/bochsrc.gdb

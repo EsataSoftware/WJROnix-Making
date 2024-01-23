@@ -1,2 +1,14 @@
+
 *.bin
 *.img
+*.zst
+*.map
+*.o
+*.out
+*.gz
+*.ini
+
+
+bochs/src
+bochs/pkg
+*.zst
