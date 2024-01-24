@@ -7,8 +7,10 @@
 *.out
 *.gz
 *.ini
-
+*.vmdk
+*.lock
 
 bochs/src
 bochs/pkg
-*.zst
+
+
