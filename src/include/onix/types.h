@@ -3,7 +3,9 @@
 //一些常量
 #define EOF -1// 判断错误的情况
 
-#define NULL 0//空指针
+#define NULL ((void*)0)//空指针
+
+#define EOS '\0'
 
 #define bool _Bool//C++的bool
 #define  true 1
