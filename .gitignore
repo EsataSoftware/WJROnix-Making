@@ -9,8 +9,9 @@
 *.ini
 *.vmdk
 *.lock
-
+*.s
 bochs/src
 bochs/pkg
+
 
 
