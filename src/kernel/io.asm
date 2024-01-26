@@ -8,8 +8,8 @@ inb :
     mov ebp ,esp ;保存帧
 
     xor eax,eax;将eax清0
-    mov edx,[ebp + 8];edx是port
-    in al,dx;将端口号的 dx 的 8 bit 输入到 ax
+    mov edx,[ebp + 8];edx是port/端口号
+    in al,dx;将端口号 的 8 bit 输入到 al
     jmp $+2
     jmp $+2
     jmp $+2
@@ -25,7 +25,7 @@ outb :
     
     mov edx,[ebp + 8];port  找到要输出的端口号
     mov eax,[ebp + 12];value  输出的数据
-    out  dx,al;将端口号的 al 的 8 bit 输入到 端口号 dx
+    out  dx,al;将dx所存的端口号 的 8 bit 输入到 端口号 dx
     
     jmp $+2
     jmp $+2
