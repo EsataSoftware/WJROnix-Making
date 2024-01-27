@@ -3,29 +3,32 @@
 # include <onix/io.h>
 # include <onix/string.h>
 # include <onix/console.h>
-// - CRT 地址寄存器 0x3D4
-// - CRT 数据寄存器 0x3D5
-// - CRT 光标位置 - 高位 0xE
-// - CRT 光标位置 - 低位 0xF
-
-// #define CRT_ADDR_REG 0x3D4
-// #define CRT_DATA_REG 0x3D5
-
-// #define CRT_CURSOR_H 0xe
-// #define CRT_CURSOR_L 0xf
+# include <onix/stdarg.h>
 
 char message[]="WJR onix!!!\n";
 char buf[1024];
 
+void text_stdarg(int cnt,...)//...的意思是不限制参数个数
+{
+    va_list args;//valist指针
+    va_start(args,cnt);//将args指针指向下一个参数
+    int arg;
+    while(cnt --)
+    {
+        arg=va_arg(args,int);
+    }
+    va_end(args);
+
+}
 void kernel_init()
 {
     console_init();
+    text_stdarg(5,1,0xaa,5,0x55,10);
+    // while(true)
+    // {
+    // console_write(message,strlen(message));
     
-    while(true)
-    {
-    console_write(message,strlen(message));
-    
-    }
+    // }
     return ;
 }
 
