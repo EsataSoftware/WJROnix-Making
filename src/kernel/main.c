@@ -14,7 +14,7 @@
 // #define CRT_CURSOR_H 0xe
 // #define CRT_CURSOR_L 0xf
 
-char message[]="hello onix!!!\n";
+char message[]="WJR onix!!!\n";
 char buf[1024];
 
 void kernel_init()
@@ -23,7 +23,8 @@ void kernel_init()
     
     while(true)
     {
-    console_write(message,sizeof(message)-1);
+    console_write(message,strlen(message));
+    
     }
     return ;
 }
