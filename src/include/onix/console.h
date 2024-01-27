@@ -5,7 +5,7 @@
 
 void console_init();//初始化
 void console_clear();//清空显卡
-void console_write(char * bug,u32 count);//向显示屏上写东西
+void console_write(char * buf,u32 count);//向显示屏上写东西
 
 
 #endif

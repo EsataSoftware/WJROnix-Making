@@ -34,6 +34,8 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/main.o \
 	$(BUILD)/kernel/console.o \
 	$(BUILD)/kernel/io.o 	\
+	$(BUILD)/kernel/printk.o 	\
+	$(BUILD)/lib/vsprintf.o 	\
 	$(BUILD)/lib/string.o 
 
 	$(shell mkdir -p $(dir $@))  
