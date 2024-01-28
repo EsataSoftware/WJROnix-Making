@@ -49,7 +49,7 @@ static char *number(char *str, u32 *num, int base, int size, int precision, int 
 
     // 如果 flags 指出要左对齐，则屏蔽类型中的填零标志
     if (flags & LEFT)
-        flags &= ~ZEROPAD;
+        flags &= ~ZEROPAD;//将flags的ZEROPAD位进行位与清0
 
     // 如果进制基数小于 2 或大于 36，则退出处理
     // 也即本程序只能处理基数在 2-32 之间的数
