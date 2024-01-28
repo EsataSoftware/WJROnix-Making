@@ -6,6 +6,9 @@
 # include <onix/stdarg.h>
 # include <onix/printk.h>
 # include <onix/assert.h>
+# include <onix/debug.h>
+
+
 
 
 void kernel_init()
@@ -19,8 +22,10 @@ void kernel_init()
     // //console_write(message,strlen(message));
     
     // }
-   assert(3<5);
-    panic("Out of Memory");
+    
+    BMB;
+
+    DEBUGK("debug onix!!!\n");
     return ;
 }
 
