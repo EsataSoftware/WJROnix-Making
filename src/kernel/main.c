@@ -7,6 +7,7 @@
 # include <onix/printk.h>
 # include <onix/assert.h>
 # include <onix/debug.h>
+# include <onix/global.h>
 
 
 
@@ -23,9 +24,7 @@ void kernel_init()
     
     // }
     
-    BMB;
-
-    DEBUGK("debug onix!!!\n");
+    gdt_init();
     return ;
 }
 

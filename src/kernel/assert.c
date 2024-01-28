@@ -27,7 +27,7 @@ void assertion_failure(char * exp,char * file ,char * base, int line)
     spin("assertion_failure()");
 
     // 不可能走到这里，否则出错；
-    asm volatile ("ud2");
+    asm volatile ("ud2");//
 
 }
 
