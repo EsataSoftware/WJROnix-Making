@@ -202,11 +202,11 @@ static void command_del()
             pos -=ROW_SIZE;
            command_lf();//换行
         }
-           *ptr =ch;    //设置字符ASCII 
-           ptr++;
-           *ptr =attr;  // 设置字符属性
-            ptr++;
-           pos +=2;
+           *((char *)pos) =ch;    //设置字符ASCII 
+           pos++;
+           *((char *)pos) =attr;  // 设置字符属性
+            pos++;
+           
            x++;
 
             break;
