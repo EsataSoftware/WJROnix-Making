@@ -8,8 +8,7 @@
 # include <onix/assert.h>
 # include <onix/debug.h>
 # include <onix/global.h>
-
-
+# include <onix/interrupt.h>
 
 
 void kernel_init()
@@ -23,6 +22,7 @@ void kernel_init()
     // //console_write(message,strlen(message));
     
     // }
+    interrupt_init();
     
     gdt_init();
     return ;
