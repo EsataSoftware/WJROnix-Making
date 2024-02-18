@@ -14,17 +14,10 @@
 void kernel_init()
 {
     console_init();
-    //text_stdarg(5,1,0xaa,5,0x55,10);
-    // int cnt =30;
-    // while(cnt --)
-    // {
-    //     printk("hello onix %#010x\n",cnt);
-    // //console_write(message,strlen(message));
-    
-    // }
+    gdt_init();
     interrupt_init();
     
-    gdt_init();
+    
     return ;
 }
 
