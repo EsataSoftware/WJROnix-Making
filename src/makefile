@@ -40,6 +40,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/global.o 	\
 	$(BUILD)/kernel/interrupt.o 	\
 	$(BUILD)/kernel/handler.o 	\
+	$(BUILD)/lib/stdlib.o 	\
 	$(BUILD)/lib/vsprintf.o 	\
 	$(BUILD)/lib/string.o 
 
