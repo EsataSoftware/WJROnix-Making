@@ -32,23 +32,27 @@ void schedule()
 
 }
 
-//创建进程a
-u32 thread_a()
+//创建进程a 省略栈帧
+u32 _ofp thread_a()
 {
+    BMB;
+    asm volatile("sti\n");
+   
     while(true)
-    {
+    {   
         printk("A");
-        schedule();
     }
 }
 
 
-u32  thread_b()
+u32 _ofp thread_b()
 {
+    asm volatile("sti\n");
+
     while(true)
     {
         printk("B");
-        schedule();
+      
     }
 
 }
@@ -72,5 +76,5 @@ void task_init()
 {
     task_create(a,thread_a);
     task_create(b,thread_b);
-    schedule();
+   schedule();
 }

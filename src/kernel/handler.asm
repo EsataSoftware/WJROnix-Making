@@ -14,6 +14,7 @@ interrupt_handler_%1:
 %ifn %2
 ; 这是一个条件判断，用于检查第二个参数是否为假（即非零）。
 ; 如果第二个参数为真，则执行下一行；如果为假，则跳过下一行。
+    xchg bx,bx
     push 0x20222202
     ; 如果%2第二个参数为假（即不需要保护现场），
     ; 则压入一个特定的值（0x20222202）。这个值通常用于调试目的，用来标记中断处理程序的入口。简化结构
@@ -24,13 +25,34 @@ interrupt_handler_%1:
 
 interrupt_entry:
 
-    mov eax ,[esp]
-    ; 栈顶保存的中断号保存到eax中
+    ; 保存现场也就是上文的寄存器的信息
+    ; 段寄存器和通用寄存器
+    push ds
+    push es
+    push fs
+    push gs
+    pusha
+
+    ; 找到前面 push %1 压入的中断向量
+    mov eax,[esp + 12 * 4] ; 跳过之前的寄存器的信息，找到对应的中断向量
+   
+    ; 向中断处理函数传递参数
+    push eax
     ; 求得中断处理函数的地址，调用中断处理函数，handler_table 中存储了中断处理函数的指针
-    call [handler_table + eax*4]
-    ; 对应 push %1, 调用结束恢复栈,根据偏移地址和基地址求得中断函数的地址
-    add esp,8
-    ; 将压入栈中的中断中间值出栈
+    call [handler_table + eax * 4]
+    ; 对应 push eax, 调用结束恢复栈,根据偏移地址和基地址求得中断函数的地址
+    add esp,4
+   
+   ; 恢复下文寄存器的信息
+    popa
+    pop gs
+    pop fs
+    pop es 
+    pop ds
+
+    ; 对应push %1
+    ; 对应 error code 或 push magic
+    add esp, 8
     iret 
 
 
@@ -106,6 +128,7 @@ handler_entry_table:
     dd interrupt_handler_0x06
     dd interrupt_handler_0x07
     dd interrupt_handler_0x08
+    dd interrupt_handler_0x09
     dd interrupt_handler_0x0a
     dd interrupt_handler_0x0b
     dd interrupt_handler_0x0c
