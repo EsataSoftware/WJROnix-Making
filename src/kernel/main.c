@@ -13,13 +13,19 @@
 # include <onix/task.h>
 
 
+extern void console_init();
+extern void gdt_init();
+extern void interrupt_init();
+extern void clock_init();
+extern void hang();
+
 void kernel_init()
 {
-    console_init();
+    console_init(); //显卡驱动
     gdt_init();
     interrupt_init();
     
-    task_init();
+    //task_init();
     // asm volatile(
     //     "sti\n"
     //     "movl %eax , %eax\n");
@@ -29,6 +35,10 @@ void kernel_init()
     //     DEBUGK("looping in kernel init %d...\n",counter++);
     //     delay(100000000);
     // }
+
+     clock_init();
+    asm volatile("sti");
+    hang();
     return ;
 }
 

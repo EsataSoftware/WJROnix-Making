@@ -60,6 +60,10 @@ typedef struct gate_t
 }_packed gate_t;
 
 typedef void *handler_t; // 中断处理函数
-void interrupt_init();
+void send_eoi(int vector);
+
+// 设置中断处理函数
+void set_interrupt_handler(u32 irq,handler_t handler);// 设置中断号
+void set_interrupt_mask (u32 irq,bool enable); // 设置屏蔽字
 
 #endif

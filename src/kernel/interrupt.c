@@ -4,7 +4,7 @@
 #include <onix/debug.h>
 #include <onix/stdlib.h>
 #include <onix/io.h>
-
+#include <onix/assert.h>
 
 #define ENTRY_SIZE 0x30
 #define LOGK(fmt,args...) DEBUGK(fmt,##args)
@@ -62,10 +62,39 @@ void send_eoi(int vector)
 
 extern void schedule();// 调度函数
 
+void set_interrupt_handler(u32 irq,handler_t handler)
+{
+    assert(irq >= 0 && irq < 16);
+    handler_table[IRQ_MASTER_NR +irq] = handler;
+}
+
+void set_interrupt_mask(u32 irq, bool enable)
+{
+    assert(irq >= 0 && irq < 16);
+    u16 port;
+    if(irq <8)
+    {
+        port = PIC_M_DATA;
+    }
+    else 
+    {
+        port = PIC_S_DATA;
+        irq -= 8;
+    }
+    if(enable)
+    {
+        outb(port ,inb (port) & ~(1 << irq ));
+    }
+    else
+    {
+        outb(port,inb(port) | (1 << irq));
+    }
+}
+    u32 counter = 0;
 void default_handler(int vector)
 {
     send_eoi(vector);
-    schedule();
+    DEBUGK("[%x] default interrupt called %d...\n",vector,counter);
 }
 // 增加了中断上下文的一些寄存器的信息
 void exception_handler(
@@ -106,7 +135,7 @@ void pic_init()
     outb(PIC_S_DATA,2);          // S设置从片连接到主片的 IR2 引脚
     outb(PIC_S_DATA,0b00000001); // ICW4: 8086模式， 正常EOI
 
-    outb(PIC_M_DATA,0b11111110); // 关闭所有中断
+    outb(PIC_M_DATA,0b11111101); // 关闭所有中断
     outb(PIC_S_DATA,0b11111111); // 关闭所有中断
     
 }
@@ -130,8 +159,9 @@ void idt_init()
     {
         handler_table[i] = exception_handler; // 处理异常情况
     }
-     for(size_t i = 20;i<ENTRY_SIZE;i++)
-     {        handler_table[i] =default_handler;    // 处理默认情况
+     for(size_t i = 0x20;i<ENTRY_SIZE;i++)
+     {     
+           handler_table[i] =default_handler;    // 处理默认情况
      }
 
     idt_ptr.base = (u32) idt;//基地址

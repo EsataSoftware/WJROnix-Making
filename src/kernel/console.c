@@ -103,8 +103,12 @@ void console_clear()
 }
 static void scroll_up()//上滚一行
 {
-    if (screen  +SCR_SIZE +ROW_SIZE< MEM_END)//还未到显卡终止位置，还有空间上滚 目前的内存位置+一个页面的字节数+下一行的字节数和与显卡终止位置比较
+    if (screen  +SCR_SIZE +ROW_SIZE>=MEM_END)//还大于显卡终止位置，还有空间上滚 目前的内存位置+一个页面的字节数+下一行的字节数和与显卡终止位置比较
     {
+        memcpy((void *)MEM_BASE, (void * )screen,SCR_SIZE);
+        pos -= (screen - MEM_BASE);
+        screen = MEM_BASE;
+    }
         u32 *ptr =(u32 *)(screen + SCR_SIZE);//申请一个新的一行
         for (size_t i = 0; i < WIDTH; i++)
         {
@@ -113,18 +117,7 @@ static void scroll_up()//上滚一行
         //光标和屏幕都加一行
         screen += ROW_SIZE;
         pos += ROW_SIZE;
-        
-    }
-    else
-    {
-        //把超过显卡范围的数据拷贝到MEM_BASE,相当于是一个循环队列的思想
-        //这行代码的作用是将从屏幕上获取到的数据，
-        //从地址 screen 开始的连续字节，拷贝到地址为 MEM_BASE 的内存中，共计 SCR_SIZE 字节的数据。
-        memcpy ((void *)MEM_BASE ,(void *)screen,SCR_SIZE);
-        pos -= (screen -MEM_BASE);//然后更新光标位置到目标内存，
-        screen =MEM_BASE;//并将屏幕指针重置为内存的起始位置，
-    }
-    set_screen();
+        set_screen();
 }
 static void command_lf()//换行
 {   //列未超过规定的列行
