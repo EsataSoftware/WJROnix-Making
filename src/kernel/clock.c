@@ -32,7 +32,7 @@ void pit_init()
 }
 void clock_init()
 {
-    //  pit_init();
-    //  set_interrupt_handler(IRQ_CLOCK,clock_handler);
-    //  set_interrupt_mask(IRQ_CLOCK,true);
+     pit_init();
+     set_interrupt_handler(IRQ_CLOCK,clock_handler);
+     set_interrupt_mask(IRQ_CLOCK,true);
 }
