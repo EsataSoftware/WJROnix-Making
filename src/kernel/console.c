@@ -147,6 +147,7 @@ static void command_del()
 {
         * (u16 *) pos=erase;//清除
 }
+extern void start_beep();
  void console_write(char * buf,u32 count)//向显示屏上写东西
 {                  //字符串     长度
     char ch;//当前输出的字符
@@ -165,6 +166,7 @@ static void command_del()
             break;
         case ASCII_BEL :
           //.todo./a
+          start_beep();
             break;
          case  ASCII_BS :
             command_bs();
