@@ -11,13 +11,14 @@
 # include <onix/interrupt.h>
 # include <onix/stdlib.h>
 # include <onix/task.h>
-
+# include <onix/time.h>
 
 extern void console_init();
 extern void gdt_init();
 extern void interrupt_init();
 extern void clock_init();
 extern void hang();
+extern void time_init();
 
 void kernel_init()
 {
@@ -37,6 +38,7 @@ void kernel_init()
     // }
 
      clock_init();
+     time_init();
     asm volatile("sti");
     hang();
     return ;
