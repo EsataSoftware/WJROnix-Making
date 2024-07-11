@@ -2,6 +2,7 @@
 #include  <onix/debug.h>
 #include  <onix/stdlib.h>
 #include  <onix/io.h>
+#include  <onix/rtc.h>
 #define LOGK(fmt,args...) DEBUGK (fmt,##args)
 
 #define CMOS_ADDR 0x70
@@ -92,11 +93,7 @@ int get_yday(tm * time )
     }
     return res;
 }
-u8 cmos_read(u8 addr)
-{
-    outb(CMOS_ADDR,CMOS_NMI | addr);
-    return inb(CMOS_DATA);
-};
+
 void time_read_bcd(tm * time)
 {
     //CMOS 的访存速度很慢，为了减少时间吴超，读取下面循环中所有数值后
@@ -143,7 +140,7 @@ void time_init()
           time.tm_min,
           time.tm_sec
           );
-     hang();
+     //hang();
 }
 
 

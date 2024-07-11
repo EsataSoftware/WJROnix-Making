@@ -44,6 +44,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/handler.o 	\
 	$(BUILD)/kernel/clock.o 	\
 	$(BUILD)/kernel/time.o 	\
+	$(BUILD)/kernel/rtc.o 	\
 	$(BUILD)/lib/stdlib.o 	\
 	$(BUILD)/lib/vsprintf.o 	\
 	$(BUILD)/lib/string.o 
@@ -84,24 +85,42 @@ bochs: $(BUILD)/master.img
 bochsg: $(BUILD)/master.img
 	bochs-gdb -q -f ../bochs/bochsrc.gdb
 
-.PHONY: qemu
-qemu: $(BUILD)/master.img
-	qemu-system-i386 \
+# .PHONY: qemu
+# qemu: $(BUILD)/master.img
+# 	qemu-system-i386 \
+# 	-m 32M \
+# 	-boot c \
+# 	-drive file=$<,if=ide,index=0,media=disk,format=raw \
+# 	-audiodev pa,id=hda \
+# 	-machine pcspk-audiodev=hda \
+# 	-rtc base=localtime \
+	
+# .PHONY: qemug
+# qemug: $(BUILD)/master.img
+# 	qemu-system-i386 \
+# 	-s -S  \
+# 	-m 32M \
+# 	-boot c \
+# 	-drive file=$<,index=0,media=disk,format=raw \
+# 	-audiodev pa.id=hda \
+# 	-machine pcspk-audiodev=hda \
+
+QEMU:= qemu-system-i386 \
 	-m 32M \
 	-boot c \
-	-drive file=$<,if=ide,index=0,media=disk,format=raw \
+	-drive file=$(BUILD)/master.img,if=ide,index=0,media=disk,format=raw \
 	-audiodev pa,id=hda \
 	-machine pcspk-audiodev=hda \
-	
+	-rtc base=localtime \
+
+.PHONY: qemu
+qemu: $(BUILD)/master.img
+	$(QEMU)
+
 .PHONY: qemug
 qemug: $(BUILD)/master.img
-	qemu-system-i386 \
-	-s -S  \
-	-m 32M \
-	-boot c \
-	-drive file=$<,index=0,media=disk,format=raw \
-	-audiodev pa.id=hda \
-	-machine pcspk-audiodev=hda \
+	$(QEMU) -s -S
+
 
 $(BUILD)/master.vmdk: $(BUILD)/master.img
 	qemu-img convert -O vmdk $< $@
