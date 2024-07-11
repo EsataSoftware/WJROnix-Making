@@ -12,6 +12,7 @@
 # include <onix/stdlib.h>
 # include <onix/task.h>
 # include <onix/time.h>
+# include <onix/rtc.h>
 
 
 extern void console_init();
@@ -39,10 +40,10 @@ void kernel_init()
     //     delay(100000000);
     // }
 
-     //clock_init();
+    clock_init();
     time_init();
-   
     rtc_init();
+    set_alarm(2);
     asm volatile("sti");
     hang();
 
