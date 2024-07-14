@@ -30,7 +30,7 @@ detect_memory:
       ;没问题的话就接着遍历 di ARDS 缓冲区
       add di ,cx;cx存的是20，特殊的寄存器需要间接存
 
-      inc word [ards_count];自增ards的数量
+      inc dword [ards_count];自增ards的数量
 
       cmp ebx,0;比较后续值，判断还有没有ards
       jnz .next
@@ -44,16 +44,7 @@ detect_memory:
 
       jmp prepare_protected_mode
 
-   ;    mov cx,[ards_count];将ards的数量放入到cx通过loop来循环
-   ;    ;结构体指针
-   ;    mov si,0
-   ; .show
-   ;    mov eax,[ards_buffer+si]
-   ;    mov ebx,[ards_buffer+si+8]
-   ;    mov edx,[ards_buffer+si+16]
-   ;    add si,20;
-   ;    xchg bx,bx
-   ;    loop .show
+  
 
 prepare_protected_mode:;加载保护模式
    ;xchg bx,bx;
@@ -123,6 +114,9 @@ protect_mode:
    mov ecx, 10;起始扇区ecx寄存器中
    mov bl,200;读入几个扇区
    call read_disk
+   ; 兼容grab
+   mov eax, 0x20220205; 读取魔数
+   mov ebx,ards_count;  数量指针
 
    jmp dword code_selector:0x10000;跳转到代码段，并找到代码段0x10000位置的地方执行
    ud2;表示出错
@@ -234,6 +228,6 @@ gdt_data:;数据段
 gdt_end:
 
 ards_count:; ards 大小
-      dw 0
+      dd 0
 ards_buffer:;ards缓冲区，不固定值是因为不同的虚拟机的buffer不同
 

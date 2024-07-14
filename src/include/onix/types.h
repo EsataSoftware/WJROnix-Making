@@ -1,6 +1,7 @@
 #ifndef ONIX_TYPES_H
 #define ONIX_TYPES_H
 //一些常量
+#include <onix/onix.h>
 #define EOF -1// 判断错误的情况
 
 #define NULL ((void *)0)
@@ -8,9 +9,12 @@
 
 #define EOS '\0'
 
+//兼容vscode
+#ifndef __cplusplus
 #define bool _Bool//C++的bool
 #define  true 1
 #define false 0
+#endif
 // 用于定义特殊的结构体
 #define _packed __attribute__((packed)) 
 

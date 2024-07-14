@@ -1,7 +1,7 @@
 # ifndef ONIX_H
 # define ONIX_H
 
-# define ONIX_MAGIC 20231230
+# define ONIX_MAGIC 0x20220205
 
-void kernel_init();
+//void kernel_init();
 # endif
