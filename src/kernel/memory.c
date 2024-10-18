@@ -145,5 +145,61 @@ void memory_test()
     
     
 }
+u32 get_cr3()
+{
+    asm volatile("movl %cr3, %eax\n");
+}
+void set_cr3(u32 pde)
+{
+    ASSERT_PAGE(pde);
+    asm volatile("movl %%eax,%%cr3\n" :: "a"(pde));
+    // 将pde的值移到eax寄存器中，在将寄存器中数据移入cr3寄存器中
 
 
+}
+static void enable_page()
+{
+    //0b1000_0000_0000_0000_0000_0000_0000_0000
+    //0b8000_0000
+    asm volatile(
+        "movl %cr0, %eax\n"
+        "orl $0x80000000, %eax\n"
+        "movl %eax, %cr0\n");
+
+}
+static void entry_init(page_entry_t * entry,u32 index)
+{
+    *(u32 *)entry = 0;
+    entry->present = 1;
+    entry->write = 1;
+    entry->user = 1;
+    entry->index = index;
+}
+// 内核页目录
+#define KERNEL_PAGE_DIR 0x200000
+// 内核页表
+#define KERNEL_PAGE_ENTRY 0x201000
+
+// 初始化内存映射
+void mapping_init()
+{
+    page_entry_t *pde = (page_entry_t *) KERNEL_PAGE_DIR;// 初始化页目录
+    memset(pde,0,PAGE_SIZE);//将pde数组全部置为0
+    entry_init(&pde[0],IDX(KERNEL_PAGE_ENTRY)); // 初始化第0个页
+    page_entry_t *pte = (page_entry_t *) KERNEL_PAGE_ENTRY;// 初始化页表
+    memset(pte,0,PAGE_SIZE);
+    page_entry_t *entry;
+    // 初始化一个页目录，
+    for (size_t tide = 0; tide < 1024; tide++)
+    {
+        entry = &pte[tide];
+        entry_init(entry,tide);
+        memory_map[tide] = 1;//设置该页被占用
+    }// 将1024 个页分别进行映射到页目录中
+    BMB;
+    set_cr3((u32)pde);
+    BMB;
+    enable_page();
+    
+
+}

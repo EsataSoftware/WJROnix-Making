@@ -62,6 +62,7 @@ prepare_protected_mode:;加载保护模式
    mov eax,cr0
    or eax,1;将第0位置为1
    mov cr0,eax
+   
    ;用跳转来刷新缓存，并启用保护模式
    jmp dword code_selector:protect_mode
    ;跳转目标地址的大小为32位执行code_selector然后跳转到protected_mode
