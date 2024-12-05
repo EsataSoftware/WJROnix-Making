@@ -203,3 +203,16 @@ void mapping_init()
     
 
 }
+// 页目录
+static page_entry_t *get_pde()
+{
+    return (page_entry_t *) (0xfffff000);// 得到 0x1000
+    // 返回页目录的地址去直接修改页目录的值
+}
+// 页表
+static page_entry_t *get_pte(u32 vaddr) // 虚拟地址
+{
+    // 
+    return (page_entry_t *)(0xffc00000 |(DIDX(vaddr) << 12));
+
+}

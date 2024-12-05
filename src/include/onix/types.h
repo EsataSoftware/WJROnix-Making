@@ -20,6 +20,9 @@
 
 // 用于省略函数的栈帧
 #define _ofp __attribute__((optimize("omit-frame-pointer")))
+#define _inline __attribute__((always_inline)) inline 
+// 是一个宏定义，用于为函数指定内联属性。在 GNU 编译器（如 GCC 或 Clang）中，
+// 这种定义方式结合了 inline 和 __attribute__((always_inline))，表示始终请求内联该函数。
 //定义无符号数
 typedef unsigned int size_t;
 //定义基本数据类型 int8指的是1个字节就是8位
