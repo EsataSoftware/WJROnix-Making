@@ -197,7 +197,7 @@ data_selector equ (2 << 3)
 memory_base equ 0;基地址
 ;界限=（4G/4K）-1
 memory_limit equ ((1024 * 1024 * 1024 * 4)/(4*1024))-1;4G/4KB  内存长度-1
-
+                  ;得到内存中能放多少个页表
 
 
 gdt_ptr:
@@ -227,6 +227,7 @@ gdt_data:;数据段
    db 0b1_1_0_0_0000 |(memory_limit >>16) & 0xf
    db (memory_base>>24) & 0xff;基地址 24 ~ 31
 gdt_end:
+
 
 ards_count:; ards 大小
       dd 0
