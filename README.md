@@ -97,3 +97,16 @@
 ## lib
 
     主要用于标准库输入输出
+
+### #include<onix/stdlib.c>
+
+- 基本工具
+
+  ```cpp
+  delay(u32 count);             //忙等待延时
+  hang();                       //阻塞系统挂起
+  bcd_to_bin(u8 value)          //bcd码二进制用于输入时间
+  bin_to_bcd(u8 value)          //用于输出时间
+  div_round_up(u32 num,u32 size)//用于计算页面的数目
+
+        
