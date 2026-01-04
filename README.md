@@ -1,6 +1,6 @@
 # WJROnix-Making
 
-基于Archlinux vmware和qemu和bochs实现简易操作系统
+基于Archlinux vmware和qemu和bochs实现操作系统
 
 ## 工具
 
@@ -109,4 +109,21 @@
   bin_to_bcd(u8 value)          //用于输出时间
   div_round_up(u32 num,u32 size)//用于计算页面的数目
 
-        
+
+
+### #include<onix/string.c>
+
+```cpp
+char *strcpy(char *dest,const char *src);//从
+char *strcat(char *dest,const char *src);
+size_t strlen(const char *str);
+int strcmp (const char*lhs,const char *rhs);
+char *strchr(const char *str,int ch);
+char *strrchr(const char *str,int ch);
+
+int memcmp (const void *lhs,const void *rhs,size_t count);
+void *memset(void *dest,int ch,size_t count);
+void *memcpy(void *dest,const void *src,size_t count);
+void *memchr(const void * ptr,int ch,size_t count);
+
+```

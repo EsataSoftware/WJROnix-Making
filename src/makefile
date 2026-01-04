@@ -46,6 +46,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/time.o 	\
 	$(BUILD)/kernel/rtc.o 	\
 	$(BUILD)/kernel/memory.o 	\
+	$(BUILD)/lib/bitmap.o  	\
 	$(BUILD)/lib/stdlib.o 	\
 	$(BUILD)/lib/vsprintf.o 	\
 	$(BUILD)/lib/string.o 
@@ -85,11 +86,11 @@ clean:
 	
 .PHONY: bochs
 bochs: $(BUILD)/master.img
-	bochs -q -f ../bochs/bochsrc
+	bochs -q -f ../bochs/bochsrc -unlock
 
 .PHONY: bochsg
 bochsg: $(BUILD)/master.img
-	bochs-gdb -q -f ../bochs/bochsrc.gdb
+	bochs-gdb -q -f ../bochs/bochsrc.gdb -unlock
 
 # .PHONY: qemu
 # qemu: $(BUILD)/master.img

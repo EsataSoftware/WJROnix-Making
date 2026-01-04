@@ -36,4 +36,5 @@ typedef unsigned short u16;//u16: 该别名表示一个无符号16位整数。u1
 typedef unsigned int u32;//u32: 该别名表示一个无符号32位整数。u32 可以存储的范围是 0 到 4,294,967,295。
 typedef unsigned long long u64;//u64: 该别名表示一个无符号64位整数。u64 可以存储的范围是 0 到 18,446,744,073,709,551,615。
 typedef u32 time_t;
+typedef u32 idx_t;
 #endif
