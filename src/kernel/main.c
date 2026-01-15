@@ -14,7 +14,7 @@
 #include <onix/time.h>
 #include <onix/rtc.h>
 #include <onix/memory.h>
-#include <onix/bitmap.h>
+#include <onix/bitmap.h> 
 
 extern void console_init();
 extern void gdt_init();
@@ -36,8 +36,8 @@ void kernel_init()
     // rtc_init();
     // set_alarm(2);
     
-    bitmap_tests();
-    
+   // bitmap_tests();
+    memory_test();
   
    
     // asm volatile("sti");

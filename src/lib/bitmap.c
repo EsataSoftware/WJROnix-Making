@@ -64,70 +64,47 @@ void bitmap_set(bitmap_t * map, u32 index, bool value)
         map->bits[bytes] &= ~(1<< bits);
     }
 }
-
+//扫描位图，实现内存的首次适应算法，搜索位图，寻找count大小的空闲页数，然后分配
 int bitmap_scan(bitmap_t * map, u32 count)
 {
-    int start = EOF;
-    u32 bits_left = map->length *8;
-    u32 next_bit = 0;
-    u32 counter = 0;
+    int start = EOF;                // 标记目标开始的位置 
+    u32 bits_left = map->length *8; // 剩余的位数
+    u32 next_bit = 0;               // 下一个位
+    u32 counter = 0;                //计数器
 
+    //从起始位置开始，扫描位图，找到连续的且页数大小为count的空闲页数
     while(bits_left-- >0)
     {
 
-        if(!bitmap_test(map,next_bit +map->offset))
+        if(!bitmap_test(map,next_bit +map->offset))     //判断是否空闲
         {
-              counter ++;
+              counter ++;           //该页面满足++
         }
         else
         {
-            counter =0;
+            counter =0;             //不满足，置0
         }
 
         next_bit ++;
 
-        if(counter == count)
+        if(counter == count)        //观察是否找到了count数目的连续空闲页面
         {
             start = next_bit - count;
             break;
         }
     }
-    if(start ==EOF)
+    if(start ==EOF)                 //说明没有空闲页面
         return EOF;
 
-    bits_left = count;
-    next_bit = start;
-    while(bits_left --)
+    bits_left = count;              //  循环次数
+    next_bit = start;               //  页面起始值
+    while(bits_left --)             //  循环
     {
-        bitmap_set(map,map->offset +next_bit,true);
-        next_bit++;
+        bitmap_set(map,map->offset + next_bit,true);    //占用该页面
+        next_bit++;                 
     }
 
-    return start + map->offset;
+    return start + map->offset;         //返回占用的起始位置
 
 
-}
-# include <onix/debug.h>
-
-#define LOGK(fmt,args...) DEBUGK(fmt,## args)
-
-#define LEN 2
-
-u8 buf[LEN];
-bitmap_t map;
-
-void bitmap_tests()
-{
-    bitmap_init(&map, buf,LEN,0);
-    for (size_t i = 0; i < 33; i++)
-    {
-        /* code */
-        idx_t  idx = bitmap_scan(&map,1);
-        if(idx ==EOF)
-        {
-            LOGK("TEST FINISH\n");
-            break;
-        }
-        LOGK("%d\n",idx);
-    }
 }

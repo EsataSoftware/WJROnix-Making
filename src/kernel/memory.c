@@ -4,7 +4,7 @@
 #include <onix/assert.h>
 #include <onix/stdlib.h>
 #include <onix/string.h>
-
+#include <onix/bitmap.h>
 
 #define LOGK(fmt,args...) DEBUGK (fmt, ##args)
 
@@ -26,14 +26,19 @@ static u32 KERNEL_PAGE_TABLE[] =
     0x2000,
     0x3000,
 };
-#define KERNEL_MEMORY_SIZE (0x100000*sizeof(KERNEL_PAGE_TABLE))
 
+#define KERNEL_MAP_BITS 0x4000      //位示图放在内存0x4000位置
+#define KERNEL_MEMORY_SIZE (0x100000*sizeof(KERNEL_PAGE_TABLE))//可用的总空间大小
+
+bitmap_t kernel_map;//位图数据结构
+
+////描述从物理内存到实际进程可以使用的内存空间以及系统占用的空间
 typedef struct ards_t
 {
     u64 base;  // 基地址
     u64 size;  // 内存长度
     u32 type;  // 类型
-}_packed ards_t;
+}_packed ards_t;//不做硬件强行对齐，会导致内存图紊乱
 
 static u32 memory_base = 0;    //可用内存基地址 = 1M
 static u32 memory_size = 0;    //可用内存大小
@@ -89,7 +94,7 @@ void memory_init(u32 magic, u32 addr)
 static u32 start_page = 0;  // 可分配物理内存起始位置
 static u8 *memory_map;      // 物理内存数组,物理页引用数量，只有保证所有引用都不存在才能释放此物理内存
 static u32 memory_map_pages;// 物理内存数组占用的页数
-//  跟踪每一段内存的使用情况以及对每一段内存进行处理
+//  跟踪每一段内存的使用情况以及对每一段内存进行处理，进入loader之后对物理内存进行划分和映射，并位图初始化
 void memory_map_init()
 {
         // 初始化物理内存数组
@@ -110,6 +115,15 @@ void memory_map_init()
             memory_map[i] = 1;// 默认是0，未被占用
         }
         LOGK("Total pages %d free pages %d\n", total_pages, free_pages);
+
+
+        //初始化内核虚拟内存位图，保证8位对齐
+
+        u32 length = (IDX(KERNEL_MEMORY_SIZE) - IDX(MEMORY_BASE))/8;//起
+        bitmap_init(&kernel_map,(u8 *)KERNEL_MAP_BITS,length,IDX(MEMORY_BASE));
+        bitmap_scan(&kernel_map,memory_map_pages);
+
+
 } 
 static u32 get_page()
 {
@@ -222,7 +236,7 @@ void mapping_init()
     //设置cr3寄存器
     set_cr3((u32)pde);
 
-    BMB;
+ 
     //分页有效
     enable_page();
     
@@ -249,3 +263,77 @@ static void flush_tlb(u32 vaddr)
     : "memory");
 }
 
+// 从位图里面扫描 count 个连续的页
+// 设置static 去实现memory.h未声明的函数，是推荐的
+static u32 scan_page(bitmap_t*map,u32 count)
+{
+    assert (count > 0);
+    int32 index = bitmap_scan(map,count);
+
+    if(index ==EOF)// 说明找不到count连续的页
+    {
+        panic("Scan page fail!!!");
+    }
+    
+    u32 addr = PAGE(index);//获取index的低20位
+    LOGK("Scan page 0x%p count %d\n",addr,count);
+
+    return addr;
+
+}
+
+
+//与scan_page 相对，重置相应的页
+// 设置static 去实现memory.h未声明的函数，是推荐的
+static void reset_page(bitmap_t *map, u32 addr,u32 count)
+{
+    ASSERT_PAGE(addr);// 不懂
+
+    assert(count >0);
+    u32 index = IDX(addr);
+
+    for(size_t i = 0; i < count; i++)
+    {
+        assert(bitmap_test(map,index + i));
+        bitmap_set(map,index+1,0);
+
+    }
+
+}
+//分配内存空间
+u32 alloc_kpage(u32 count)
+{
+    assert(count >0);
+    u32 vaddr = scan_page(&kernel_map, count);
+
+    LOGK("ALLOC kernel pages 0x%p count %d\n",vaddr,count);
+
+    return vaddr;
+}
+
+//释放地址
+void free_kpage(u32 vaddr,u32 count)
+{
+    ASSERT_PAGE(vaddr);
+
+    assert(count);
+
+    reset_page(&kernel_map,vaddr,count);
+    LOGK("FREE kernel pages 0x%p,count 0x%d\n",vaddr,count);
+}
+void memory_test()
+{
+    u32 * pages = (u32 *) (0x200000);//2M位置
+    u32 count = 0x6ff;  //一共0x7000个页，但是位图占用两个，所以减去2个页
+    for(size_t i = 0; i < count; i++)
+    {
+        pages[i] =alloc_kpage(1);
+        LOGK("0x%x\n",i);
+    }
+    for (size_t i = 0; i < count; i++)
+    {
+         free_kpage(pages[i],1);
+        
+    }
+    
+}
